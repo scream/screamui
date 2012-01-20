@@ -168,7 +168,6 @@ $(function(){
     // loading any preexisting todos that might be saved in *localStorage*.
     initialize: function() {
       this.input    = this.$("#new-todo");
-
       Todos.bind('add',   this.addOne, this);
       Todos.bind('reset', this.addAll, this);
       Todos.bind('all',   this.render, this);
