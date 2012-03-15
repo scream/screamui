@@ -1,2 +1,2 @@
 screamui
-seven
+seven.guo
