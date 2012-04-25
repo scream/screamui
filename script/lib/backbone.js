@@ -998,7 +998,13 @@
   // Set up inheritance for the model, collection, and view.
   Backbone.Model.extend = Backbone.Collection.extend =
     Backbone.Router.extend = Backbone.View.extend = extend;
-
+	/*
+  Backbone.View.extend = function (protoProps, classProps) {
+    var child = inherits(this, protoProps, classProps);
+    child.extend = this.extend;
+    return child;
+  };
+	*/
   // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
   var methodMap = {
     'create': 'POST',

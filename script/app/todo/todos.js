@@ -95,6 +95,7 @@ $(function(){
 
     // Re-render the contents of the todo item.
     render: function() {
+		debugger;
       $(this.el).html(this.template(this.model.toJSON()));
       this.setText();
       return this;
@@ -171,7 +172,6 @@ $(function(){
       Todos.bind('add',   this.addOne, this);
       Todos.bind('reset', this.addAll, this);
       Todos.bind('all',   this.render, this);
-
       Todos.fetch();
     },
 
