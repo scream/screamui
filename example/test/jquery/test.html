@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+  span { color:red; }
+  </style>
+  <script src="jquery.js"></script>
+</head>
+<body>
+  Reversed - <span id="test"></span>
+
+  <div class="test">One</div>
+  <div class="test">Two</div>
+  <div>Three</div>
+<script>
+	var test = function(a){
+		this.a = a;
+	};
+	test.prototype = {
+	length: 0,
+	splice: [].splice,
+	push: [].push
+	}
+	debugger;
+	var testObj = new test('a');
+	testObj.push('hello');
+	console.log(66);
+	/*
+    function disp(divs) {
+      var a = [];
+      for (var i = 0; i < divs.length; i++) {
+        a.push(divs[i].innerHTML);
+      }
+      $("span").text(a.join(" "));
+    }
+    
+    //disp( $("div").toArray().reverse() );
+	$(function(){
+		//debugger;
+		jQuery();
+		var aObj = new Array(1);
+		aObj[0]=1;
+		aObj[1]=2;
+		var $test = $('.test');
+		console.log($test);
+	});
+	*/
+</script>
+</body>
+</html>
