@@ -1,0 +1,278 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Untitled Page</title>
+
+    <script type="text/javascript" language="javascript">
+
+        var browser = {};
+
+        var ua = navigator.userAgent.toLowerCase();
+
+        browser.msie = (/msie ([\d.]+)/).test(ua);
+        browser.firefox = (/firefox\/([\d.]+)/).test(ua);
+        browser.chrome = (/chrome\/([\d.]+)/).test(ua);
+
+        function SetNodeStyle(doc, node, name, value)
+        {
+            if (node.innerHTML == undefined)
+            {
+                return node;
+            }
+            else
+            {
+                node.style[name] = value;
+
+                for (var i = 0; i < node.childNodes.length; i++)
+                {
+                    var cn = node.childNodes[i];
+                    if (node.innerHTML != undefined)
+                    {
+                        SetNodeStyle(doc, cn, name, value);
+                    }
+                }
+
+                return node;
+            }
+        }
+
+        function SetStyle(doc, html, name, value)
+        {
+            var dom = doc.createElement("DIV");
+            dom.innerHTML = html;
+
+            for (var i = 0; i < dom.childNodes.length; i++)
+            {
+                var node = dom.childNodes[i];
+
+                if (node.innerHTML == undefined)
+                {
+                    var span = doc.createElement("SPAN");
+                    span.style[name] = value;
+                    if (node.nodeValue != undefined) span.innerHTML = node.nodeValue.replace(/\</ig, function() { return "&lt;"; });
+                    else if (node.textContent != undefined) span.innetHTML = node.textContent.replace(/\</ig, function() { return "&lt;"; });
+                    dom.replaceChild(span, node);
+                }
+                else
+                {
+                    SetNodeStyle(doc, node, name, value);
+                }
+            }
+
+            return dom.innerHTML;
+        }
+
+        function GetInnerHTML(nodes)
+        {
+            var builder = [];
+            for (var i = 0; i < nodes.length; i++)
+            {
+                if (nodes[i].innerHTML != undefined)
+                {
+                    builder.push(nodes[i].innerHTML);
+                }
+                else
+                {
+                    if (nodes[i].textContent) builder.push(nodes[i].textContent.replace(/\</ig, function() { return "&lt;"; }));
+                    else if (nodes[i].nodeValue) builder.push(nodes[i].nodeValue.replace(/\</ig, function() { return "&lt;"; }));
+                }
+            }
+            return builder.join("");
+        }
+
+        function SelectionRange(doc, range)
+        {
+            this.GetSelectedHtml = function()
+            {
+                if (range == null) return "";
+                
+                if (browser.msie)
+                {
+                    if (range.htmlText != undefined) return range.htmlText;
+                    else return "";
+                }
+                else if (browser.firefox || browser.chrome)
+                {
+                    return GetInnerHTML(range.cloneContents().childNodes);
+                }
+                else
+                {
+                    return "";
+                }
+            }
+
+            this.Replace = function(html)
+            {
+                if (range != null)
+                {
+                    if (browser.msie)
+                    {
+                        if (range.pasteHTML != undefined)
+                        {
+                            range.select();
+                            range.pasteHTML(html);
+                            return true;
+                        }
+                    }
+                    else if (browser.firefox || browser.chrome)
+                    {
+                        if (range.deleteContents != undefined && range.insertNode != undefined)
+                        {
+                            var temp = doc.createElement("DIV");
+                            temp.innerHTML = html;
+
+                            var elems = [];
+                            for (var i = 0; i < temp.childNodes.length; i++)
+                            {
+                                elems.push(temp.childNodes[i]);
+                            }
+
+                            range.deleteContents();
+
+                            for (var i in elems)
+                            {
+                                temp.removeChild(elems[i]);
+                                range.insertNode(elems[i]);
+                            }
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
+        function GetSelectionRange(win)
+        {
+            var range = null;
+
+            if (browser.msie)
+            {
+                range = win.document.selection.createRange();
+                if (range.parentElement().document != win.document)
+                {
+                    range = null;
+                }
+            }
+            else if (browser.firefox || browser.chrome)
+            {
+                var sel = win.getSelection();
+                if (sel.rangeCount > 0) range = sel.getRangeAt(0); else range = null;
+            }
+
+            return new SelectionRange(win.document, range);
+        }
+
+        function RichEditor(container, width, height)
+        {
+			
+            container.innerHTML =
+            '<div style="margin: 0px; padding: 0px; background-color: #DDDDDD;">' +
+                '<img alt="" unselectable="on" src="image/img.gif" style="float: left; cursor:pointer; -moz-user-select:-moz-none; -webkit-user-select:none;" />' +
+                '<img alt="" unselectable="on" src="image/b.gif" style="float: left; cursor:pointer; -moz-user-select:-moz-none; -webkit-user-select:none;" />' +
+                '<img alt="" unselectable="on" src="image/u.gif" style="float: left; cursor:pointer; -moz-user-select:-moz-none; -webkit-user-select:none;" />' +
+                '<img alt="" unselectable="on" src="image/i.gif" style="float: left; cursor:pointer; -moz-user-select:-moz-none; -webkit-user-select:none;" />' +
+                '<span style="font-size:12px; margin:6px; float: left;">大小</span>' +
+                '<select style="width: 70px; margin-left:4px; margin-top: 2px; float: left;">' +
+                    '<option value="12px">12</option>' +
+                    '<option value="14px">14</option>' +
+                    '<option value="16px">16</option>' +
+                    '<option value="18px">18</option>' +
+                    '<option value="20px">20</option>' +
+                    '<option value="22px">22</option>' +
+                    '<option value="24px">24</option>' +
+                    '<option value="36px">36</option>' +
+                    '<option value="48px">48</option>' +
+                    '<option value="72px">72</option>' +
+                '</select>' +
+                '<span style="font-size:12px; margin:6px; float: left;">字体</span>' +
+                '<select style="width: 150px; margin-left:4px; margin-top: 2px; float: left;">' +
+                    '<option value="宋体">宋体</option>' +
+                    '<option value="Times New Roman">Times New Roman</option>' +
+                    '<option value="Courier New">Courier New</option>' +
+                    '<option value="Verdana">Verdana</option>' +
+                '</select>' +
+            '</div>' +
+            '<iframe frameborder="0" style="padding: 0px;"></iframe>';
+
+            var toolbar = container.childNodes[0];
+            var editor = container.childNodes[1];
+
+            var editorDoc = editor.contentWindow.document;
+            var editorWindow = editor.contentWindow;
+
+            toolbar.style.width = width + 'px';
+            toolbar.style.height = '24px';
+
+            editor.style.width = width + 'px';
+            editor.style.height = (height - 24) + 'px';
+
+            if (browser.firefox)
+            {
+                editor.onload = function()
+                {
+                    editorDoc.designMode = "on";
+                }
+            }
+            else
+            {
+                editorDoc.designMode = "on";
+            }
+
+            editorDoc.open();
+            editorDoc.write("<html><head></head><body style='margin:0px; padding: 0px;'></body></html>");
+            editorDoc.close();
+            toolbar.childNodes[0].onclick = function()
+            {
+                var src = prompt("请输入图片的URL:", "");
+                if (src != null)
+                {
+                    var range = GetSelectionRange(editorWindow);
+                    range.Replace("<img src='" + src + "'></img>");
+                }
+            }
+
+            toolbar.childNodes[1].onclick = function()
+            {
+                editorDoc.execCommand("Bold", false, null);
+            }
+
+            toolbar.childNodes[2].onclick = function()
+            {
+                editorDoc.execCommand("Underline", false, null);
+            }
+
+            toolbar.childNodes[3].onclick = function()
+            {
+                editorDoc.execCommand("Italic", false, null);
+            }
+
+
+            toolbar.childNodes[5].onchange = function()
+            {
+                var range = GetSelectionRange(editorWindow);
+                var html = SetStyle(editorDoc, range.GetSelectedHtml(), "fontSize", toolbar.childNodes[5].value);
+                range.Replace(html);
+            }
+
+            toolbar.childNodes[7].onchange = function()
+            {
+                var range = GetSelectionRange(editorWindow);
+                var html = SetStyle(editorDoc, range.GetSelectedHtml(), "fontFamily", toolbar.childNodes[7].value);
+                range.Replace(html);
+            }
+        }
+
+        window.onload = function()
+        {
+            var editor = new RichEditor(document.getElementById("richEditor"), 600, 250);
+        }
+	
+    </script>
+
+</head>
+<body>
+    <div id="richEditor" style="width: 600px; border: 1px solid #000000;">
+    </div>
+</body>
+</html>
