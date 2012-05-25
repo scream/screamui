@@ -25,7 +25,7 @@
  /* TOOLTIP PUBLIC CLASS DEFINITION
   * =============================== */
 
-  var Tooltip = function ( element, options ) {
+  var Tooltip = function ( element, options ) { //el,'toggle'
     this.init('tooltip', element, options)
   }
 
@@ -33,7 +33,7 @@
 
     constructor: Tooltip
 
-  , init: function ( type, element, options ) {
+  , init: function ( type, element, options ) { //'tooltip',el,'toggle'
       var eventIn
         , eventOut
 
@@ -47,6 +47,7 @@
         eventOut = this.options.trigger == 'hover' ? 'mouseleave' : 'blur'
         this.$element.on(eventIn, this.options.selector, $.proxy(this.enter, this))
         this.$element.on(eventOut, this.options.selector, $.proxy(this.leave, this))
+		//$(document.body).on('click',this.options.selector, $.proxy(this.hide, this))
       }
 
       this.options.selector ?
@@ -84,7 +85,6 @@
 
   , leave: function ( e ) {
       var self = $(e.currentTarget)[this.type](this._options).data(this.type)
-
       if (!self.options.delay || !self.options.delay.hide) {
         self.hide()
       } else {
@@ -121,7 +121,7 @@
         inside = /in/.test(placement)
 
         $tip
-          .remove()
+          //.remove()
           .css({ top: 0, left: 0, display: 'block' })
           .appendTo(inside ? this.$element : document.body)
 
@@ -154,7 +154,7 @@
 
   , setContent: function () {
       var $tip = this.tip()
-      $tip.find('.tooltip-inner').html(this.getTitle())
+      $tip.find('.tooltip-inner span.txt').html(this.getTitle())
       $tip.removeClass('fade in top bottom left right')
     }
 
@@ -182,8 +182,8 @@
 
   , fixTitle: function () {
       var $e = this.$element
-      if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
-        $e.attr('data-original-title', $e.attr('title') || '').removeAttr('title')
+      if ($e.attr('title') || typeof($e.attr('data-correct-title')) != 'string') {
+        $e.attr('data-correct-title', $e.attr('title') || '').removeAttr('title')
       }
     }
 
@@ -203,7 +203,7 @@
         , $e = this.$element
         , o = this.options
 
-      title = $e.attr('data-original-title')
+      title = $e.attr('data-correct-title')
         || (typeof o.title == 'function' ? o.title.call($e[0]) :  o.title)
 
       title = title.toString().replace(/(^\s*|\s*$)/, "")
@@ -250,7 +250,7 @@
       var $this = $(this)
         , data = $this.data('tooltip')
         , options = typeof option == 'object' && option
-      if (!data) $this.data('tooltip', (data = new Tooltip(this, options)))
+      if (!data) $this.data('tooltip', (data = new Tooltip(this, options))) //this === $el,options === 'toggle'
       if (typeof option == 'string') data[option]()
     })
   }

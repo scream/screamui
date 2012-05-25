@@ -1,0 +1,38 @@
+<html>
+<script>
+//s.split(/\s*[!,'.]|[!,'.]\s*|\s+|[!,'.]/).length
+var str = "Hi!  my name's tianzi,I form to beijing,I 'm 27 old years ,nice to meet you. tianzi.";
+var stringArray = str.split('');
+var result = '';
+var _noneterminalPunctuation = "\"',:;()~@#$%^&*-+={}[]";
+var _terminalPunctuation = ",!.?";
+var allPunctuation = _noneterminalPunctuation + _terminalPunctuation;
+var canTerminal = function(value){
+    return _terminalPunctuation.indexOf(value) > -1;
+}
+var isPunc = function(value){
+    return allPunctuation.indexOf(value) > -1;
+}
+var isPuncOrSpace = function(value){
+    return isPunc(value) || value == ' ';
+}
+var count = 0;
+var max = 50;
+var reach = false;
+for(var i = 0; i < stringArray.length; i++){
+    var current = stringArray[i];
+    var next = stringArray[i+1];
+    result += current;
+    if(!reach && isPuncOrSpace(current) && !isPuncOrSpace(next)){
+        count++;
+        result += count;
+        if(count >= max && canTerminal(current)){
+            reach = true;
+            result += '$';
+        }
+    }
+}
+console.log(result);
+</script>
+
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+    <title>Keyboard.js Test</title>
+    <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.2/prototype.js"></script>-->
+    <script type="text/javascript" src="../../../script/lib/jquery.js"></script>
+    <script type="text/javascript" src="../../../script/tool/keyboard.js"></script>
+	
+    
+    <script type="text/javascript">
+      //<![CDATA[
+      function good(element) {
+        if (window.Prototype) {
+          $(element).setStyle({ backgroundColor: 'lightgreen' });
+        } else if (window.jQuery) {
+          if (typeof element === 'string') {
+            element = '#' + element;
+          }
+          jQuery(element).css({ backgroundColor: 'lightgreen' });
+        }
+      }
+      
+      function setup(text, key) {
+        var id1, id2, id3, id4, id5, id6, id7, id8, e = document.createElement('div');
+        e.id = '_' + key;
+        id1 = e.id + '_raw';
+        id2 = e.id + '_ctrl';
+        id3 = e.id + '_shift';
+        id4 = e.id + '_alt';
+        id5 = e.id + '_ctrl_shift';
+        id6 = e.id + '_ctrl_alt';
+        id7 = e.id + '_shift_alt';
+        id8 = e.id + '_ctrl_shift_alt';
+        document.body.appendChild(e);
+        e.innerHTML = '<table cellspacing="5"><tr>' +
+          '<td id="' + id1 + '">' + text + '</td>' +
+          '<td id="' + id2 + '">Ctrl+' + text + '</td>' +
+          '<td id="' + id3 + '">Shift+' + text + '</td>' +
+          '<td id="' + id4 + '">Alt+' + text + '</td>' +
+          '<td id="' + id5 + '">Ctrl+Shift+' + text + '</td>' +
+          '<td id="' + id6 + '">Ctrl+Alt+' + text + '</td>' +
+          '<td id="' + id7 + '">Shift+Alt+' + text + '</td>' +
+          '<td id="' + id8 + '">Ctrl+Shift+Alt+' + text + '</td>' +
+          '</tr></table>';
+        Keyboard.registerGlobal(key,             function (event) { good(id1); }, true);
+        Keyboard.registerGlobal(key + KEY.CTRL,  function (event) { good(id2); }, true);
+        Keyboard.registerGlobal(key + KEY.SHIFT, function (event) { good(id3); }, true);
+        Keyboard.registerGlobal(key + KEY.ALT,   function (event) { good(id4); }, true);
+        Keyboard.registerGlobal(key + KEY.CTRL + KEY.SHIFT, function (event) { good(id5); }, true);
+        if (key !== KEY.F10) {
+          Keyboard.registerGlobal(key + KEY.CTRL + KEY.ALT,   function (event) { good(id6); }, true);
+        }
+        Keyboard.registerGlobal(key + KEY.SHIFT + KEY.ALT,  function (event) { good(id7); }, true);
+        Keyboard.registerGlobal(key + KEY.CTRL + KEY.SHIFT + KEY.ALT, function (event) { good(id8); }, true);
+      }
+      
+      var onDomLoaded;
+      
+      if (window.Prototype) {
+        onDomLoaded = document.observe.curry("dom:loaded");
+      } else if (window.jQuery) {
+        onDomLoaded = jQuery(document).ready;
+      }
+      
+      onDomLoaded(function () {
+        Keyboard.registerGlobal(KEY.CTRL + KEY.ALT + KEY.F10, function (event) {
+          if (window.Prototype) {
+            $('testLocalRegister').focus();
+          } else {
+            document.getElementById('testLocalRegister').focus();
+          }
+          good('testLocalRegister');
+        }, true);
+        var local = Keyboard.handlerFor('testLocalRegister');
+        local.register(KEY.UP, function (event) {
+          good('testLocalRegisterUp');
+        }, true);
+        local.register(KEY.LEFT, function (event) {
+          good('testLocalRegisterLeft');
+        }, true);
+        local.register(KEY.RIGHT, function (event) {
+          good('testLocalRegisterRight');
+        }, true);
+        local.register(KEY.DOWN, function (event) {
+          good('testLocalRegisterDown');
+        }, true);
+        
+        Keyboard.registerGlobal(KEY.CTRL, function (event) {
+          good('testCtrl');
+        }, true);
+        Keyboard.registerGlobal(KEY.SHIFT, function (event) {
+          good('testShift');
+        }, true);
+        Keyboard.registerGlobal(KEY.ALT, function (event) {
+          good('testAlt');
+        }, true);
+        
+        setup('Backspace', KEY.BACKSPACE);
+        setup('Tab', KEY.TAB);
+        setup('Enter', KEY.ENTER);
+        setup('Break', KEY.BREAK);
+        setup('CapsLock', KEY.CAPSLOCK);
+        setup('Esc', KEY.ESC);
+        setup('Space', KEY.SPACE);
+        setup('PgUp', KEY.PAGEUP);
+        setup('PgDown', KEY.PAGEDOWN);
+        setup('End', KEY.END);
+        setup('Home', KEY.HOME);
+        setup('Left', KEY.LEFT);
+        setup('Up', KEY.UP);
+        setup('Right', KEY.RIGHT);
+        setup('Down', KEY.DOWN);
+        setup('Insert', KEY.INSERT);
+        setup('Delete', KEY.DELETE);
+        setup('0', KEY.ZERO);
+        setup('1', KEY.ONE);
+        setup('2', KEY.TWO);
+        setup('3', KEY.THREE);
+        setup('4', KEY.FOUR);
+        setup('5', KEY.FIVE);
+        setup('6', KEY.SIX);
+        setup('7', KEY.SEVEN);
+        setup('8', KEY.EIGHT);
+        setup('9', KEY.NINE);
+        setup('¡§/^', KEY.UMLAUT);
+        setup('A', KEY.A);
+        setup('B', KEY.B);
+        setup('C', KEY.C);
+        setup('D', KEY.D);
+        setup('E', KEY.E);
+        setup('F', KEY.F);
+        setup('G', KEY.G);
+        setup('H', KEY.H);
+        setup('I', KEY.I);
+        setup('J', KEY.J);
+        setup('K', KEY.K);
+        setup('L', KEY.L);
+        setup('M', KEY.M);
+        setup('N', KEY.N);
+        setup('O', KEY.O);
+        setup('P', KEY.P);
+        setup('Q', KEY.Q);
+        setup('R', KEY.R);
+        setup('S', KEY.S);
+        setup('T', KEY.T);
+        setup('U', KEY.U);
+        setup('V', KEY.V);
+        setup('W', KEY.W);
+        setup('X', KEY.X);
+        setup('Y', KEY.Y);
+        setup('Z', KEY.Z);
+        setup('Pad0', KEY.NUMPAD0);
+        setup('Pad1', KEY.NUMPAD1);
+        setup('Pad2', KEY.NUMPAD2);
+        setup('Pad3', KEY.NUMPAD3);
+        setup('Pad4', KEY.NUMPAD4);
+        setup('Pad5', KEY.NUMPAD5);
+        setup('Pad6', KEY.NUMPAD6);
+        setup('Pad7', KEY.NUMPAD7);
+        setup('Pad8', KEY.NUMPAD8);
+        setup('Pad9', KEY.NUMPAD9);
+        setup('Pad*', KEY.MULTIPLY);
+        setup('Pad+', KEY.ADD);
+        setup('Pad-', KEY.SUBTRACT);
+        setup('PadDecimal', KEY.DECIMAL);
+        setup('Pad/', KEY.DIVIDE);
+        setup('F1', KEY.F1);
+        setup('F2', KEY.F2);
+        setup('F3', KEY.F3);
+        setup('F4', KEY.F4);
+        setup('F5', KEY.F5);
+        setup('F6', KEY.F6);
+        setup('F7', KEY.F7);
+        setup('F8', KEY.F8);
+        setup('F9', KEY.F9);
+        setup('F10', KEY.F10);
+        setup('F11', KEY.F11);
+        setup('F12', KEY.F12);
+        setup('NumLock', KEY.NUMLOCK);
+        setup('ScrollLock', KEY.SCROLL);
+        setup('+/?', KEY.PLUS);
+        setup(',/;', KEY.COMMA);
+        setup('-/_', KEY.MINUS);
+        setup('./:', KEY.PERIOD);
+        setup("'/*", KEY.APOSTROPHE);
+        setup('?', KEY.AE);
+        setup('¡ä/`', KEY.ACCENT);
+        setup('?/¡ì', KEY.HALF);
+        setup('?', KEY.AA);
+        setup('?', KEY.OE);
+        setup('&lt;/&gt;', KEY.ANGLE);
+      });
+      // ]]>
+    </script>
+    <style type="text/css">
+      body {
+        font-family: sans-serif;
+      }
+      div {
+        border: 1px solid silver;
+        text-align: center;
+        padding: 5px;
+        margin: 5px;
+        background-color: white;
+      }
+      table {
+        width: 100%;
+      }
+      td {
+        border: 1px solid silver;
+        text-align: center;
+        padding: 5px;
+        width: 12%;
+        background-color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Local event handler test:</p>
+    <div id="testLocalRegister">
+      Press Ctrl+Alt+F10 anywhere to focus here
+      <div id="testLocalRegisterUp">Press Up</div>
+      <div id="testLocalRegisterLeft">Press Left</div>
+      <div id="testLocalRegisterRight">Press Right</div>
+      <div id="testLocalRegisterDown">Press Down</div>
+    </div>
+    <p>The rest of these are global:</p>
+    <div id="testCtrl">Ctrl</div>
+    <div id="testShift">Shift</div>
+    <div id="testAlt">Alt</div>
+  </body>
+</html>

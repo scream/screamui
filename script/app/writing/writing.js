@@ -99,25 +99,32 @@ $(
 			}
 			return new SelectionRange(range);
 		};
+		
 		var insertWriting = function(){
-			doc.designMode = 'on';
+			//doc.designMode = 'on';
 			doc.open();
 			doc.write('<html>' +
 							'<head>' +
 							'<link rel="stylesheet" type="text/less" href="../../../css/common/bootstrap.css"/>'+
+							//'<link rel="stylesheet" type="text/less" href="../../../css/writing/childIfrEdit.css"/>'+
 							'<style type="text/css">' +
 								'body{color:#48484C;}' +
-								'div::selection{ background:#ff720e;color:white;}' +
+								'div::selection{ background:#ff720e;color:white;outline:none;}' +
 								'code{border:none;font-weight:bold;color:ff720e;}' +
-								'.writing-content{font-size:13px;line-height:20px;padding:30px 55px;}' +
-							'</style>' +
+								'.writing-content{font-size:13px;line-height:20px;padding:30px 55px;height:180px;}' +
+								'.btns-action{background:#FFF;border:1px solid #DDD;width:300px;}' +
+								'.btns-action li{padding:5px;cursor:pointer;}' +
+								'.select-section{background:#ff720e;color:white;}' +
+								'.select-section li{float:left;}' +
+							'</style>'+
 							'<script type="text/javascript" src="../../../script/lib/jquery.js"></script>' +
 							'<script type="text/javascript" src="../../../script/plugin/bootstrap-tooltip.js"></script>' +
 							'</head>' +
 							'<body>' +
-							'<div class="writing-content">' +
+							'<div class="writing-content" contentEditable="true">' +
 								'Dear Sir,<br/>How are you? I\'d like to ask you some legal advice. Last week, I was broken my right arm in the gym room when I was using the equipment. I think the equipment was faulty. That day, I heard some sound from the equipment when I was using it. After a few minutes, I was broken. I told the gym, they said that I did not use the machine correctly. Actually, I use the machine every day so I totally understand how to use it. Meanwhile, there had a witness told me that she saw a screw dropped it down from the machine when I was using it. She is willing to testify in the court.' +
 							'</div>' +
+							'<script type="text/javascript" src="../../../script/app/writing/writingEdit.js"></script>' +
 							'</body></html>');
 			doc.close();
 		};
@@ -206,7 +213,7 @@ $(
 			setEditVal : function(){
 				$('#correctionText').val('');
 				$('#sectionText').val(currentSelectionObj.txt);
-				this.setFocus();
+				//this.setFocus();
 			},
 			setFocus : function(){
 				$('#correctionText').addClass('focused').focus();
@@ -252,7 +259,7 @@ $(
 				$('#correctionEditting').removeClass('hide').css({'height':0}).animate({'height':61});
 			},
 			collapseEditStatus : function(){
-				$('#correctionEditting').animate({'height':0});
+				$('#correctionEditting').animate({'height':0},{'complete':function(){$(this).addClass('hide')}});
 			}
 		});
 		_.once(WT.correction.edittingView);
