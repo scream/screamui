@@ -294,18 +294,25 @@ $(
 												'<span class="txt"></span>' +
 												'<label class="checkbox inline dl"><input type="button" value="Delete" class="btn-danger"/></label>' +
 											'</div>' +
-										'</div>'
+										  '</div>'
 							});
 				$code.tooltip('show');
 				this.cancelCorrection();
 			},
 			handleDelete : function( tooltips, tips, el ){
-				$tips = $(tips);
-				$tips.unbind('click').on('click',$.proxy(this.deleteCorrection,this));
+                this.$code = $(el);
+				this.$tips = $(tips);
+                this.$tips.hover(function(){$(this).show()},function(){$(this).hide()});
+				this.$tips.unbind('click').on('click',$.proxy(this.deleteCorrection,this));
 				return this.pos;
 			},
-			deleteCorrection : function(){
-				
+			deleteCorrection : function( ev ){
+                if( ev.target.tagName.toLowerCase() != 'input' ){
+                    ev.stopPropagation();
+                    return false;
+                }
+                var txt = this.$code.html();
+                this.$code.replaceWith(txt);
 			},
 			enterCorrection : function( ev ){
 				if (ev.keyCode == 13){
@@ -358,8 +365,50 @@ $(
 					ev = {'pageX' : mousePositon.left, 'pageY' : mousePositon.top, 'name' : n.name};
 					handleAction.fire( ev );
 				});
-			
 		});
+        
+        var showTipsByKey = function(){
+            var count = 0;
+            var previousCode;
+            jwerty.key( 'J', function ( ev ) {
+					var $allCode = $('code[rel=tooltip]');
+                    var len = $allCode.length;
+                    if( previousCode ){
+                        previousCode.mouseout();
+                    }
+                    if( count >= len ){
+                        count = 0;
+                    }
+                    $allCode.eq(count).mouseover();
+                    previousCode = $allCode.eq(count);
+                    count++;
+            });
+                
+            jwerty.key( 'K', function ( ev ) {
+                var $allCode = $('code[rel=tooltip]');
+                var len = $allCode.length;
+                if( count != 0 ){
+                    count--;
+                }
+                if( previousCode ){
+                    previousCode.mouseout();
+                }
+                if( count === 0 ){
+                    count = len;
+                }
+                if( count < 0 ){
+                    count = len-1;
+                }
+                $allCode.eq(count-1).mouseover();
+                previousCode = $allCode.eq(count-1);
+            });
+            
+            jwerty.key( 'del', function ( ev ) {
+                previousCode.replaceWith(previousCode.html());
+                $(document.body).click();
+            });
+        };
+        showTipsByKey();
 		
 		
 		!function(){

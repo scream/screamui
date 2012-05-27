@@ -47,7 +47,7 @@
         eventOut = this.options.trigger == 'hover' ? 'mouseleave' : 'blur'
         this.$element.on(eventIn, this.options.selector, $.proxy(this.enter, this))
         this.$element.on(eventOut, this.options.selector, $.proxy(this.leave, this))
-		//$(document.body).on('click',this.options.selector, $.proxy(this.hide, this))
+		$(document.body).on('click',this.options.selector, $.proxy(this.hide, this))
       }
 
       this.options.selector ?
@@ -84,6 +84,9 @@
     }
 
   , leave: function ( e ) {
+      if($(e.toElement).hasClass('tooltip') || $(e.toElement).hasClass('tooltip-arrow') || $(e.toElement).hasClass('tooltip-inner')){
+        return false;
+      }
       var self = $(e.currentTarget)[this.type](this._options).data(this.type)
       if (!self.options.delay || !self.options.delay.hide) {
         self.hide()
@@ -135,7 +138,7 @@
             tp = {top: pos.top + pos.height, left: pos.left + pos.width / 2 - actualWidth / 2}
             break
           case 'top':
-            tp = {top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2}
+            tp = {top: pos.top - actualHeight+8, left: pos.left + pos.width / 2 - actualWidth / 2}
             break
           case 'left':
             tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth}
