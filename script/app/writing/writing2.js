@@ -6,7 +6,7 @@ $(
 		var $writeEditor = $('#writingContent');
 		var $writingEditorIframe = $('#writingEditorIframe');
 		var $claimActionsArea = $('#claimActionsArea');
-		var $autoCorrection = $('#autoCorrection');
+		var $autoCorrection = $('#spellCheck');
 		var currentSelectionObj;
 		var isIe = $.browser.msie;
 		var isMoz = $.browser.mozilla;
@@ -18,7 +18,31 @@ $(
 		};
 		
 		
-		var symbolsList = [{name:'AG',des:'agreement(I AM, she IS)',img:'AG.gif'},{name:'AR',des:'article (a, an, the)',img:'AR.gif'},{name:'CC',des:'capitalisation',img:'C.gif'},{name:'CO',des:'combine sentences',img:'CO.gif'},{name:'DD',des:'delete',img:'D.gif'},{name:'EX',des:'expression or idiom',img:'EX.gif'},{name:'I(x)',des:'insert x',img:'I(x).gif'},{name:'MW',des:'missing word',img:'MW.gif'},{name:'NS',des:'new sentence',img:'NS.gif'},{name:'NSW',des:'no such word',img:'NSW.gif'},{name:'PH',des:'phraseology',img:'PH.gif'},{name:'PL',des:'plural',img:'PL.gif'},{name:'PO',des:'possessive',img:'PO.gif'},{name:'PR',des:'preposition',img:'PR.gif'},{name:'PS',des:'part of speech',img:'PS.gif'},{name:'PU',des:'punctuation',img:'PU.gif'},{name:'SI',des:'singular',img:'SI.gif'},{name:'SP',des:'spelling',img:'SP.gif'},{name:'VT',des:'verb tense',img:'VT.gif'},{name:'WO',des:'word order',img:'WO.gif'},{name:'WC',des:'Word Choice',img:'WC.gif'},{name:'XY',des:'change from x to y',img:'xy.gif'},{name:'HL',des:'highlight',img:'HL.gif'}];
+		var symbolsList = [
+			{name:'SP','key':'SP',des:'spelling',img:'SP.gif'},
+            {name:'WC','key':'WC',des:'Word Choice',img:'WC.gif'},
+            {name:'I(x)','key':'IX',des:'insert x',img:'I(x).gif'},
+            {name:'MW','key':'MW',des:'missing word',img:'MW.gif'},
+            {name:'AR','key':'AR',des:'article (a, an, the)',img:'AR.gif'},
+            {name:'XY','key':'XY',des:'change from x to y',img:'xy.gif'},
+            {name:'PR','key':'PR',des:'preposition',img:'PR.gif'},
+            {name:'PU','key':'PU',des:'punctuation',img:'PU.gif'},
+            {name:'DD','key':'DD',des:'delete',img:'D.gif'},
+            {name:'CC','key':'CC',des:'capitalisation',img:'C.gif'},
+            {name:'VT','key':'VT',des:'verb tense',img:'VT.gif'},
+            {name:'PL','key':'PL',des:'plural',img:'PL.gif'},
+            {name:'AG','key':'AG',des:'agreement(I AM, she IS)',img:'AG.gif'},
+            {name:'PS','key':'PS',des:'part of speech',img:'PS.gif'},
+            {name:'PH','key':'PH',des:'phraseology',img:'PH.gif'},
+            {name:'WO','key':'WO',des:'word order',img:'WO.gif'},
+            {name:'CO','key':'CO',des:'combine sentences',img:'CO.gif'},
+            {name:'NS','key':'NS',des:'new sentence',img:'NS.gif'},
+            {name:'HL','key':'HL',des:'highlight',img:'HL.gif'},
+            {name:'SI','key':'SI',des:'singular',img:'SI.gif'},
+            {name:'PO','key':'PO',des:'possessive',img:'PO.gif'},
+            {name:'EX','key':'EX',des:'expression or idiom',img:'EX.gif'},
+            {name:'NSW','key':'NSW',des:'no such word',img:'NSW.gif'}
+			];
 		
 		$('code[rel=tooltip]').tooltip('show');
 		
@@ -273,7 +297,7 @@ $(
 				$('#correctionText').addClass('focused').select().focus();
 			},
 			saveCorrection : function(){
-				var HEIGHT = 24;
+				var HEIGHT = 28;
 				var self = this;
 				this.pos = 'top';
 				var correctionTxt = $('#correctionText').val();
@@ -282,7 +306,7 @@ $(
 				if($span.outerHeight() > HEIGHT){
 					this.pos = 'right';
 				}
-				var $code = $('<code rel="tooltip" action="'+this.options.cName+'" class="'+this.options.cName.toLowerCase()+'" data-correct-title="'+this.options.cName + ':' + correctionTxt+'">' + spanHtml + '</code>');
+				var $code = $('<code rel="tooltip" action="'+this.options.cName+'" class="'+this.options.cName.toLowerCase()+'" data-correct-title="'+ correctionTxt+'">' + spanHtml + '</code>');
 				$span.replaceWith($code);
 				
 				$code.data({
@@ -332,7 +356,7 @@ $(
 			},
 			expandEditStatus : function(){
 				var self = this;
-				$('#correctionEditting').removeClass('hide').css({'height':0}).animate({'height':90},{'complete':function(){debugger;self.setFocus();}});
+				$('#correctionEditting').removeClass('hide').css({'height':0}).animate({'height':90},{'complete':function(){self.setFocus();}});
 			}
 		});
 
@@ -360,7 +384,7 @@ $(
 		
 		$.each( symbolsList, function( m, n ){
 		
-				jwerty.key( n.name.split('').join(','), function ( ev ) {
+				jwerty.key( n.key.split('').join(','), function ( ev ) {
 					var pos = !_.isEmpty( mousePositon ) ? mousePositon : $('#writingContent').position();
 					ev = {'pageX' : mousePositon.left, 'pageY' : mousePositon.top, 'name' : n.name};
 					handleAction.fire( ev );
@@ -403,16 +427,27 @@ $(
                 previousCode = $allCode.eq(count-1);
             });
             
-            jwerty.key( 'del', function ( ev ) {
-                previousCode.replaceWith(previousCode.html());
-                $(document.body).click();
+            jwerty.key( 'd', function ( ev ) {
+				if( previousCode ){
+					previousCode.replaceWith(previousCode.html());
+					$(document.body).click();
+				}
             });
+			/*
+			var local = Keyboard.handlerFor('writingContent');
+			local.register(KEY.D, function (ev) {
+			  alert(66);
+			}, true);
+			*/
         };
         showTipsByKey();
 		
 		
 		!function(){
+			/*
 			var str = "Dear Sir,How are you? I'd like to ask you some legal advice. Last week, I was broken my right arm in the gym room when I was using the equipment. I think the equipment was faulty. That day, I heard some sound from the equipment when I was using it. After a few minutes, I was broken. I told the gym, they said that I did not use the machine correctly. Actually, I use the machine every day so I totally understand how to use it. Meanwhile, there had a witness told me that she saw a screw dropped it down from the machine when I was using it. She is willing to testify in the court.";
+			*/
+			var str = "Many people find their rewards unfair, especially when comparing these super salaries with those of top surgeons or research scientists, or even leading politicians who have the responsibility of governing the country. However, sports salaries are not determined by considering the contribution to society a person makes, or the level of responsibility he or she holds. Instead, they reflect the publics popularity of sport ins general and the level of publics support that successful stars can generate. So the notion of ¡®fairness¡¯ is not the issue.</br>Those who feel that sports stars¡¯ salaries are justified might argue that the number of professionals withs real talent are very few, and the money is a recognition of the skills and dedication a person needs to be successful. Competition is constant and a player is tested every time they perform ins their relatively shorts career. The pressure from the media is intense and there is little privacy out of the spotlight. So all of these factors may justify the huge earnings.";
 			var stringArray = str.split('');
 			var result = '';
 			var _noneterminalPunctuation = "\"',:;()~@#$%^&*-+={}[]";
@@ -446,7 +481,6 @@ $(
 			$writeEditor.html(result);
 		}()
 		
-		
 		!function(){
 			$.ajax({
 				url : '',
@@ -458,6 +492,48 @@ $(
 				
 				}
 			});
+		}()
+		
+		!function(){
+			var $hintArrow = $('.hint-arrow');
+			var $hintBar = $('#hintBar');
+			var flag = 1;
+			
+			$hintArrow .click(function(){
+				if( flag ){
+					$hintBar.animate({left:788},{complete:function(){
+							$('.hint-arrow').addClass('lt');
+							$('#correctionEditArea').css({'overflow':'visible'});
+						}
+					});
+					flag = 0;
+				}else{
+					$('#correctionEditArea').css({'overflow':'hidden'});
+					$hintBar.animate({left:0},{complete:function(){
+							$('.hint-arrow').removeClass('lt');
+						}
+					});
+					flag = 1;
+				}
+			});
+			
+			jwerty.key( 'ctrl+/', function ( ev ) {
+				if( flag ){
+					$hintBar.animate({left:788},{complete:function(){
+							$('.hint-arrow').addClass('lt');
+							$('#correctionEditArea').css({'overflow':'visible'});
+						}
+					});
+					flag = 0;
+				}else{
+					$('#correctionEditArea').css({'overflow':'hidden'});
+					$hintBar.animate({left:0},{complete:function(){
+							$('.hint-arrow').removeClass('lt');
+						}
+					});
+					flag = 1;
+				}
+            });
 		}()
 	}
 )

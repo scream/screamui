@@ -109,7 +109,7 @@
         , placement
         , tp
 
-      if (this.hasContent() && this.enabled) {
+      if (this.enabled) {
         $tip = this.tip()
         this.setContent()
 
@@ -138,7 +138,7 @@
             tp = {top: pos.top + pos.height, left: pos.left + pos.width / 2 - actualWidth / 2}
             break
           case 'top':
-            tp = {top: pos.top - actualHeight+8, left: pos.left + pos.width / 2 - actualWidth / 2}
+            tp = {top: pos.top - actualHeight+6, left: pos.left + pos.width / 2 - actualWidth / 2}
             break
           case 'left':
             tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth}
@@ -157,7 +157,7 @@
 
   , setContent: function () {
       var $tip = this.tip()
-      $tip.find('.tooltip-inner span.txt').html(this.getTitle())
+      $tip.find('.tooltip-inner span.txt').html(this.getAction() + ":" + this.getTitle())
       $tip.removeClass('fade in top bottom left right')
     }
 
@@ -213,7 +213,18 @@
 
       return title
     }
+  , getAction : function(){
+    var title
+        , $e = this.$element
+        , o = this.options
 
+      title = $e.attr('action')
+        || (typeof o.title == 'function' ? o.title.call($e[0]) :  o.title)
+
+      title = title.toString().replace(/(^\s*|\s*$)/, "")
+
+      return title
+    }
   , tip: function () {
       return this.$tip = this.$tip || $(this.options.template)
     }
@@ -267,7 +278,13 @@
   , placement: 'top'
   , trigger: 'hover'
   , title: ''
-  , template: '<div class="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+  , template: '<div class="tooltip">' + 
+					'<div class="tooltip-arrow"></div>' +
+					'<div class="tooltip-inner inline">' +
+						'<span class="txt"></span>' +
+						'<label class="checkbox inline dl"><input type="button" value="Delete" class="btn-danger"/></label>' +
+					'</div>' +
+				'</div>'
   }
 
 }( window.jQuery )
