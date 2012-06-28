@@ -97,7 +97,7 @@
             // Insert key, or ins
             ins: 45, insert: 45,
             // Delete key, on Mac: ⌫ (Delete)
-            del: 45, 'delete': 45,
+            del: 46, 'delete': 46,
             
             // Left Arrow Key, or ←
             '←': 37, left: 37, 'arrow-left': 37,
@@ -207,8 +207,7 @@
                     jwertyCombo: String(jwertyCodeFragment),
                     shiftKey: false,
                     ctrlKey: false,
-                    altKey: false,
-                    metaKey: false
+                    altKey: false
                 }
                 
                 // If jwertyCodeFragment isn't an array then cast as a string
@@ -375,6 +374,7 @@
             
             // Loop through each fragment of jwertyCode
             while (n--) {
+				debugger;
                 returnValue = jwertyCode[n].jwertyCombo;
                 // For each property in the jwertyCode object, compare to `event`
                 for (var p in jwertyCode[n]) {
