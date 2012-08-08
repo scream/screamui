@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+  span { color:red; }
+  </style>
+  <script src="jquery.js"></script>
+</head>
+<body>
+  Reversed - <span id="test"></span>
+
+  <div class="test">One</div>
+  <div class="test">Two</div>
+  <div>Three</div>
+<script>
+	var test = function(a){
+		this.a = a;
+	};
+	test.world = 'world';
+	
+	test.prototype.hello = function(hello){
+		
+	}
+	/*
+	test.prototype = {
+		//constructor : test,
+		fun1 : function(){
+			
+		}
+	};
+	test.prototype.constructor = test
+	*/
+	
+	var test2 = function(b){
+		this.b=b;
+	}
+	test2.prototype = new test();
+	
+	test2.prototype.constructor = test2;
+	
+	
+	var testObj = new test2();
+	debugger;
+</script>
+</body>
+</html>

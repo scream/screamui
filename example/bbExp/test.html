@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>backbone</title>
+  <script type="text/javascript" src="../script/lib/jquery.js"></script>
+  <script type="text/javascript" src="../script/lib/underscore.js"></script>
+  <script type="text/javascript" src="../script/lib/backbone.js"></script>  
+  <script type="text/javascript" src="../script/lib/mustache.js"></script>
+  <style type="text/css">
+  #data1,#data2{
+    width:100px;
+    height:100px;
+    border:1px solid #DDDDDD;
+  }
+  </style>
+</head>
+ <body>
+    <div id="data1">
+        
+    </div>
+    <div id="data2">
+        
+    </div>
+    <p>
+        <script id="hello-container-template" type="text/template"><span>{{name}} says: {{message}} </span></script>
+    </p>
+    <script type="text/javascript">
+        var testModel = Backbone.Model.extend({
+            defaults : {
+                'name' : 'hello',
+                'message' : 'world'
+            }
+        });
+        var testView1 = Backbone.View.extend({
+            el : $('#data1'),
+            template : $('#hello-container-template').html(),
+            initialize : function(options){
+                //this.render();
+                this.options.model.bind('change',this.render,this);
+            },
+            render : function(){
+                this.el.append(Mustache.to_html(this.template,this.options.model.attributes));
+            }
+        });
+        var testView2 = Backbone.View.extend({
+            el : $('#data2'),
+            template : $('#hello-container-template').html(),
+            initialize : function(options){
+                 //this.render();
+                 debugger;
+                 this.options.model.bind('change',this.render,this);
+            },
+            render : function(){
+                this.el.append(Mustache.to_html(this.template,this.options.model.attributes));
+            }
+        });
+        var testModelObj = new testModel();
+        var testViewObj1 = new testView1({'model':testModelObj});
+        var testViewObj2 = new testView2({'model':testModelObj});
+        debugger;
+        testModelObj.set({'name':'haha'});
+    </script>
+ </body>
+</html>
